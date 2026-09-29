@@ -113,7 +113,9 @@ final class TrackersViewController: UIViewController {
         setupConstraints()
         setupKeyboardDismissGesture()
         
-        loadData() // 🔥 Загружаем данные из Core Data
+        trackerStore.delegate = self
+        
+        loadData()
     }
     
     // MARK: - Настройка навигационной панели
@@ -316,6 +318,24 @@ extension TrackersViewController: CreateTrackerViewControllerDelegate {
             loadData()
         } catch {
             print("[TrackersViewController] Ошибка добавления трекера: \(error)")
+        }
+    }
+}
+
+// MARK: - TrackerStoreDelegate (автоматическое обновление таблицы)
+extension TrackersViewController: TrackerStoreDelegate {
+    
+    func didUpdate(_ update: TrackerStoreUpdate) {
+        // Анимированное обновление коллекции
+        collectionView.performBatchUpdates {
+            let insertedIndexPaths = update.insertedIndexes.map { IndexPath(item: $0, section: 0) }
+            let deletedIndexPaths = update.deletedIndexes.map { IndexPath(item: $0, section: 0) }
+            
+            collectionView.insertItems(at: insertedIndexPaths)
+            collectionView.deleteItems(at: deletedIndexPaths)
+        } completion: { _ in
+            // Загрузка данных (для корректного отображения секций)
+            self.loadData()
         }
     }
 }

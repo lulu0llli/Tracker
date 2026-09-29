@@ -1,19 +1,54 @@
 import CoreData
 import UIKit
 
-final class TrackerRecordStore {
+// MARK: - Делегат Store (без Core Data)
+protocol TrackerRecordStoreDelegate: AnyObject {
+    func didUpdate(_ update: TrackerRecordStoreUpdate)
+}
+
+// MARK: - Структура обновлений
+struct TrackerRecordStoreUpdate {
+    let insertedIndexes: IndexSet
+    let deletedIndexes: IndexSet
+}
+
+final class TrackerRecordStore: NSObject {
     
     // MARK: - Свойства
     private let context: NSManagedObjectContext
     
+    weak var delegate: TrackerRecordStoreDelegate?
+    
+    private var insertedIndexes: IndexSet?
+    private var deletedIndexes: IndexSet?
+    
+    // MARK: - NSFetchedResultsController
+    private lazy var fetchedResultsController: NSFetchedResultsController<TrackerRecordCoreData> = {
+        let fetchRequest = TrackerRecordCoreData.fetchRequest()
+        fetchRequest.sortDescriptors = [
+            NSSortDescriptor(key: "date", ascending: false)
+        ]
+        
+        let controller = NSFetchedResultsController(
+            fetchRequest: fetchRequest,
+            managedObjectContext: context,
+            sectionNameKeyPath: nil,
+            cacheName: nil
+        )
+        controller.delegate = self
+        try? controller.performFetch()
+        return controller
+    }()
+    
     // MARK: - Init
-    convenience init() {
+    override convenience init() {
         let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
         self.init(context: context)
     }
     
     init(context: NSManagedObjectContext) {
         self.context = context
+        super.init()
     }
     
     // MARK: - CRUD
@@ -42,9 +77,8 @@ final class TrackerRecordStore {
     
     /// Получить все записи
     func fetchRecords() throws -> [TrackerRecord] {
-        let request: NSFetchRequest<TrackerRecordCoreData> = TrackerRecordCoreData.fetchRequest()
-        let result = try context.fetch(request)
-        return result.compactMap { recordCoreData in
+        guard let objects = fetchedResultsController.fetchedObjects else { return [] }
+        return objects.compactMap { recordCoreData in
             guard let trackerId = recordCoreData.trackerId,
                   let date = recordCoreData.date else { return nil }
             return TrackerRecord(trackerId: trackerId, date: date)
@@ -70,5 +104,44 @@ final class TrackerRecordStore {
             endOfDay as CVarArg
         )
         return try context.count(for: request) > 0
+    }
+}
+
+// MARK: - NSFetchedResultsControllerDelegate
+extension TrackerRecordStore: NSFetchedResultsControllerDelegate {
+    
+    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        insertedIndexes = IndexSet()
+        deletedIndexes = IndexSet()
+    }
+    
+    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        delegate?.didUpdate(TrackerRecordStoreUpdate(
+            insertedIndexes: insertedIndexes ?? IndexSet(),
+            deletedIndexes: deletedIndexes ?? IndexSet()
+        ))
+        insertedIndexes = nil
+        deletedIndexes = nil
+    }
+    
+    func controller(
+        _ controller: NSFetchedResultsController<NSFetchRequestResult>,
+        didChange anObject: Any,
+        at indexPath: IndexPath?,
+        for type: NSFetchedResultsChangeType,
+        newIndexPath: IndexPath?
+    ) {
+        switch type {
+        case .delete:
+            if let indexPath = indexPath {
+                deletedIndexes?.insert(indexPath.item)
+            }
+        case .insert:
+            if let newIndexPath = newIndexPath {
+                insertedIndexes?.insert(newIndexPath.item)
+            }
+        default:
+            break
+        }
     }
 }

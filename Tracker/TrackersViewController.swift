@@ -3,10 +3,10 @@ import UIKit
 final class TrackersViewController: UIViewController {
     
     // MARK: - Данные
-    private var categories: [TrackerCategory] = []           // Все категории с трекерами
-    private var completedTrackers: [TrackerRecord] = []      // Записи о выполненных трекерах
-    private var visibleCategories: [TrackerCategory] = []    // Категории, видимые на выбранную дату
-    private var currentDate: Date = Date()                   // Текущая выбранная дата
+    private var categories: [TrackerCategory] = [] // Все категории с трекерами
+    private var completedTrackers: [TrackerRecord] = [] // Записи о выполненных трекерах
+    private var visibleCategories: [TrackerCategory] = [] // Категории, видимые на выбранную дату
+    private var currentDate: Date = Date() // Текущая выбранная дата
     
     // MARK: - Store-классы (слой абстракции от Core Data)
     private let trackerStore = TrackerStore()
@@ -113,7 +113,10 @@ final class TrackersViewController: UIViewController {
         setupConstraints()
         setupKeyboardDismissGesture()
         
+        // Пподписки на делегаты Store
         trackerStore.delegate = self
+        categoryStore.delegate = self
+        recordStore.delegate = self
         
         loadData()
     }
@@ -337,5 +340,18 @@ extension TrackersViewController: TrackerStoreDelegate {
             // Загрузка данных (для корректного отображения секций)
             self.loadData()
         }
+    }
+}
+// MARK: - TrackerCategoryStoreDelegate
+extension TrackersViewController: TrackerCategoryStoreDelegate {
+    func didUpdate(_ update: TrackerCategoryStoreUpdate) {
+        loadData()
+    }
+}
+
+// MARK: - TrackerRecordStoreDelegate
+extension TrackersViewController: TrackerRecordStoreDelegate {
+    func didUpdate(_ update: TrackerRecordStoreUpdate) {
+        loadData()
     }
 }

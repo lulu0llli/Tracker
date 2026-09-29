@@ -57,17 +57,20 @@ final class TrackerRecordStore: NSObject {
     func addRecord(_ record: TrackerRecord) throws {
         let recordCoreData = TrackerRecordCoreData(context: context)
         recordCoreData.trackerId = record.trackerId
-        recordCoreData.date = record.date
+        recordCoreData.date = Calendar.current.startOfDay(for: record.date)
         try context.save()
     }
     
     /// Удалить запись
     func deleteRecord(_ record: TrackerRecord) throws {
         let request: NSFetchRequest<TrackerRecordCoreData> = TrackerRecordCoreData.fetchRequest()
+        let startOfDay = Calendar.current.startOfDay(for: record.date)
+        let endOfDay = Calendar.current.date(byAdding: .day, value: 1, to: startOfDay)!
         request.predicate = NSPredicate(
-            format: "trackerId == %@ AND date == %@",
+            format: "trackerId == %@ AND date >= %@ AND date < %@",
             record.trackerId as CVarArg,
-            record.date as CVarArg
+            startOfDay as CVarArg,
+            endOfDay as CVarArg
         )
         if let object = try context.fetch(request).first {
             context.delete(object)

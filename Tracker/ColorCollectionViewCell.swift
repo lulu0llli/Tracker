@@ -3,7 +3,6 @@ import UIKit
 final class ColorCollectionViewCell: UICollectionViewCell {
     static let identifier = "ColorCollectionViewCell"
     
-    // Цветной прямоугольник 40×40
     private let colorView: UIView = {
         let view = UIView()
         view.layer.cornerRadius = 8
@@ -18,6 +17,8 @@ final class ColorCollectionViewCell: UICollectionViewCell {
         contentView.addSubview(colorView)
         contentView.layer.cornerRadius = 16
         contentView.layer.masksToBounds = true
+        contentView.layer.borderWidth = 0
+        contentView.layer.borderColor = UIColor.clear.cgColor
         
         NSLayoutConstraint.activate([
             colorView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
@@ -34,8 +35,9 @@ final class ColorCollectionViewCell: UICollectionViewCell {
     
     func configure(with color: UIColor, isSelected: Bool) {
         colorView.backgroundColor = color
-        contentView.backgroundColor = isSelected
-            ? (UIColor(named: "YPBackgroundGrey") ?? UIColor(hex: "#E6E8EB"))
-            : .clear
+        contentView.layer.borderWidth = isSelected ? 3 : 0
+        contentView.layer.borderColor = isSelected
+            ? (UIColor(named: "YPGrey") ?? .systemGray).cgColor
+            : UIColor.clear.cgColor
     }
 }

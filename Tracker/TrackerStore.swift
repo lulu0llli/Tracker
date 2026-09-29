@@ -47,6 +47,8 @@ final class TrackerStore: NSObject {
     init(context: NSManagedObjectContext) {
         self.context = context
         super.init()
+        
+        _ = fetchedResultsController
     }
     
     // MARK: - CRUD

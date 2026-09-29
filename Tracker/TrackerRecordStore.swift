@@ -36,7 +36,11 @@ final class TrackerRecordStore: NSObject {
             cacheName: nil
         )
         controller.delegate = self
-        try? controller.performFetch()
+        do {
+            try controller.performFetch()
+        } catch {
+            print("[\(Self.self)] Ошибка performFetch: \(error)")
+        }
         return controller
     }()
     

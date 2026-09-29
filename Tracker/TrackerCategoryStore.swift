@@ -37,7 +37,11 @@ final class TrackerCategoryStore: NSObject {
             cacheName: nil
         )
         controller.delegate = self
-        try? controller.performFetch()
+        do {
+            try controller.performFetch()
+        } catch {
+            print("[\(Self.self)] Ошибка performFetch: \(error)")
+        }
         return controller
     }()
     
@@ -61,25 +65,27 @@ final class TrackerCategoryStore: NSObject {
         return objects.compactMap { categoryCoreData -> TrackerCategory? in
             guard let title = categoryCoreData.title else { return nil }
             
-            let trackers = (categoryCoreData.trackers as? Set<TrackerCoreData>)?.compactMap { trackerCoreData -> Tracker? in
-                guard let id = trackerCoreData.id,
-                      let trackerTitle = trackerCoreData.title,
-                      let colorHex = trackerCoreData.color,
-                      let emoji = trackerCoreData.emoji else { return nil }
-                
-                let color = colorMarshalling.color(from: colorHex)
-                let schedule = trackerCoreData.schedule?
-                    .split(separator: ",")
-                    .compactMap { Weekday(rawValue: String($0)) }
-                
-                return Tracker(
-                    id: id,
-                    title: trackerTitle,
-                    color: color,
-                    emoji: emoji,
-                    schedule: schedule
-                )
-            } ?? []
+            let trackers = (categoryCoreData.trackers as? Set<TrackerCoreData>)?
+                .compactMap { trackerCoreData -> Tracker? in
+                    guard let id = trackerCoreData.id,
+                          let trackerTitle = trackerCoreData.title,
+                          let colorHex = trackerCoreData.color,
+                          let emoji = trackerCoreData.emoji else { return nil }
+                    
+                    let color = colorMarshalling.color(from: colorHex)
+                    let schedule = trackerCoreData.schedule?
+                        .split(separator: ",")
+                        .compactMap { Weekday(rawValue: String($0)) }
+                    
+                    return Tracker(
+                        id: id,
+                        title: trackerTitle,
+                        color: color,
+                        emoji: emoji,
+                        schedule: schedule
+                    )
+                }
+                .sorted { $0.title < $1.title } ?? []
             
             return TrackerCategory(title: title, trackers: trackers)
         }

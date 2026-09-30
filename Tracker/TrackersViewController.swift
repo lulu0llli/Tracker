@@ -3,10 +3,15 @@ import UIKit
 final class TrackersViewController: UIViewController {
     
     // MARK: - Данные
-    private var categories: [TrackerCategory] = []           // Все категории с трекерами
-    private var completedTrackers: [TrackerRecord] = []      // Записи о выполненных трекерах
-    private var visibleCategories: [TrackerCategory] = []    // Категории, видимые на выбранную дату
-    private var currentDate: Date = Date()                   // Текущая выбранная дата
+    private var categories: [TrackerCategory] = [] // Все категории с трекерами
+    private var completedTrackers: [TrackerRecord] = [] // Записи о выполненных трекерах
+    private var visibleCategories: [TrackerCategory] = [] // Категории, видимые на выбранную дату
+    private var currentDate: Date = Date() // Текущая выбранная дата
+    
+    // MARK: - Store-классы (слой абстракции от Core Data)
+    private let trackerStore = TrackerStore()
+    private let categoryStore = TrackerCategoryStore()
+    private let recordStore = TrackerRecordStore()
     
     // MARK: - UI Элементы
     
@@ -17,7 +22,7 @@ final class TrackersViewController: UIViewController {
             target: self,
             action: #selector(didTapAddButton)
         )
-        button.tintColor = UIColor(named: "YPBlack") ?? .black // #1A1B22
+        button.tintColor = UIColor(named: "YPBlack") ?? .black
         return button
     }()
     
@@ -28,21 +33,18 @@ final class TrackersViewController: UIViewController {
         picker.preferredDatePickerStyle = .compact
         picker.overrideUserInterfaceStyle = .light
         picker.tintColor = UIColor(named: "YPBlack") ?? .black
-        
         picker.locale = Locale(identifier: "ru_RU")
         picker.calendar.locale = Locale(identifier: "ru_RU")
-        
         picker.addTarget(self, action: #selector(datePickerValueChanged(_:)), for: .valueChanged)
         return picker
-    }()// !!! у даты на главном экране: font-family: SF Pro; font-weight: 400; font-style: Regular; font-size: 17px; leading-trim: NONE; line-height: 22px; letter-spacing: 0px; text-align: right; background: #1A1B22;
-
+    }()
     
     // Заголовок "Трекеры" (большой, слева)
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.text = "Трекеры"
         label.font = UIFont(name: "SFProText-Bold", size: 34) ?? .systemFont(ofSize: 34, weight: .bold)
-        label.textColor = UIColor(named: "YPBlack") ?? .black // #1A1B22
+        label.textColor = UIColor(named: "YPBlack") ?? .black
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -51,14 +53,13 @@ final class TrackersViewController: UIViewController {
     private lazy var searchTextField: UISearchTextField = {
         let searchField = UISearchTextField()
         searchField.placeholder = "Поиск"
-        searchField.backgroundColor = UIColor(named: "YPBackgroundSearch") // #7676801F (12% прозрачности)
+        searchField.backgroundColor = UIColor(named: "YPBackgroundSearch")
         searchField.layer.cornerRadius = 10
-        searchField.font = UIFont(name: "SFProText-Regular", size: 17) ?? .systemFont(ofSize: 17) // !!! Текст "Поиск" font-family: SF Pro; font-weight: 400; font-style: Regular; font-size: 17px; leading-trim: NONE; line-height: 22px; letter-spacing: 0px; background: #AEAFB4;
+        searchField.font = UIFont(name: "SFProText-Regular", size: 17) ?? .systemFont(ofSize: 17)
         
-        // Иконка лупы слева
         let magnifyingGlass = UIImage(systemName: "magnifyingglass")
         let leftView = UIImageView(image: magnifyingGlass)
-        leftView.tintColor = UIColor(named: "YPGrey") ?? .systemGray // #AEAFB4
+        leftView.tintColor = UIColor(named: "YPGrey") ?? .systemGray
         searchField.leftView = leftView
         searchField.leftViewMode = .always
         
@@ -70,8 +71,8 @@ final class TrackersViewController: UIViewController {
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
-        layout.minimumInteritemSpacing = 8   // Отступ между ячейками по горизонтали
-        layout.minimumLineSpacing = 8        // Отступ между строками
+        layout.minimumInteritemSpacing = 8
+        layout.minimumLineSpacing = 8
         
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
@@ -107,63 +108,60 @@ final class TrackersViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .white
         
-        setupNavBar()             // Настройка навигационной панели
-        setupViews()              // Добавление элементов на экран
-        setupConstraints()        // Установка констрейнтов
-        addTestData()             // Добавление тестовых данных
-        updateVisibleCategories() // Фильтрация трекеров по текущей дате
+        setupNavBar()
+        setupViews()
+        setupConstraints()
         setupKeyboardDismissGesture()
+        
+        // Пподписки на делегаты Store
+        trackerStore.delegate = self
+        categoryStore.delegate = self
+        recordStore.delegate = self
+        
+        loadData()
     }
     
     // MARK: - Настройка навигационной панели
     private func setupNavBar() {
-        // Отключаем стандартный заголовок, используем свой UILabel
         navigationController?.navigationBar.prefersLargeTitles = false
         navigationItem.title = ""
         
-        // Кнопка "+" слева
         navigationItem.leftBarButtonItem = addButton
-        // Дата справа
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
     }
     
     // MARK: - Добавление элементов на экран
     private func setupViews() {
-        view.addSubview(titleLabel)            // Заголовок "Трекеры"
-        view.addSubview(searchTextField)       // Поле поиска
-        view.addSubview(collectionView)        // Коллекция трекеров
-        view.addSubview(placeholderImageView)  // Звёздочка-заглушка
-        view.addSubview(placeholderLabel)      // Текст заглушки
+        view.addSubview(titleLabel)
+        view.addSubview(searchTextField)
+        view.addSubview(collectionView)
+        view.addSubview(placeholderImageView)
+        view.addSubview(placeholderLabel)
     }
     
-    // MARK: - Констрейнты (расположение элементов)
+    // MARK: - Констрейнты
     private func setupConstraints() {
         NSLayoutConstraint.activate([
-            // Заголовок "Трекеры" (top 88, left 16)
             titleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 88),
             titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             titleLabel.widthAnchor.constraint(equalToConstant: 254),
             titleLabel.heightAnchor.constraint(equalToConstant: 41),
             
-            // Поле поиска (top 136, left 16, right 16, height 36)
             searchTextField.topAnchor.constraint(equalTo: view.topAnchor, constant: 136),
             searchTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             searchTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             searchTextField.heightAnchor.constraint(equalToConstant: 36),
             
-            // Коллекция трекеров (под поиском, до низа экрана)
             collectionView.topAnchor.constraint(equalTo: searchTextField.bottomAnchor, constant: 16),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             
-            // Звёздочка-заглушка (по центру, чуть ниже середины)
             placeholderImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             placeholderImageView.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -20),
             placeholderImageView.widthAnchor.constraint(equalToConstant: 80),
             placeholderImageView.heightAnchor.constraint(equalToConstant: 80),
             
-            // Текст заглушки (под звёздочкой)
             placeholderLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             placeholderLabel.topAnchor.constraint(equalTo: placeholderImageView.bottomAnchor, constant: 8),
             placeholderLabel.widthAnchor.constraint(equalToConstant: 343),
@@ -171,49 +169,30 @@ final class TrackersViewController: UIViewController {
         ])
     }
     
-    // MARK: - Закрытие клавиатуры по тапу
+    // MARK: - Закрытие клавиатуры
     private func setupKeyboardDismissGesture() {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         tapGesture.cancelsTouchesInView = false
         view.addGestureRecognizer(tapGesture)
     }
-
+    
     @objc private func dismissKeyboard() {
         view.endEditing(true)
     }
     
-    // MARK: - Тестовые данные (для отладки)
-    private func addTestData() {
-        // Создаём трекер "Утренняя зарядка"
-        let tracker1 = Tracker(
-            id: UUID(),
-            title: "Утренняя зарядка",
-            color: .systemBlue,
-            emoji: "🏃",
-            schedule: [.monday, .wednesday, .friday] // Пн, Ср, Пт
-        )
-        
-        // Создаём трекер "Чтение книг"
-        let tracker2 = Tracker(
-            id: UUID(),
-            title: "Чтение книг",
-            color: .systemGreen,
-            emoji: "📚",
-            schedule: [.tuesday, .thursday] // Вт, Чт
-        )
-        
-        // Объединяем в категорию
-        let category = TrackerCategory(
-            title: "Спорт и здоровье",
-            trackers: [tracker1, tracker2]
-        )
-        
-        categories = [category]
+    // MARK: - Загрузка данных из Core Data
+    private func loadData() {
+        do {
+            categories = try categoryStore.fetchCategories()
+            completedTrackers = try recordStore.fetchRecords()
+            updateVisibleCategories()
+        } catch {
+            print("[TrackersViewController] Ошибка загрузки данных: \(error)")
+        }
     }
     
     // MARK: - Фильтрация трекеров по дате
     private func updateVisibleCategories() {
-        // Определяем день недели для текущей даты
         let weekday = Calendar.current.component(.weekday, from: currentDate)
         let weekdaysMap: [Int: Weekday] = [
             1: .sunday, 2: .monday, 3: .tuesday, 4: .wednesday,
@@ -222,10 +201,9 @@ final class TrackersViewController: UIViewController {
         
         guard let currentWeekday = weekdaysMap[weekday] else { return }
         
-        // Фильтруем трекеры: показываем только те, у которых расписание подходит
         visibleCategories = categories.compactMap { category in
             let filteredTrackers = category.trackers.filter { tracker in
-                guard let schedule = tracker.schedule else { return true } // nil = каждый день
+                guard let schedule = tracker.schedule else { return true }
                 return schedule.contains(currentWeekday)
             }
             return filteredTrackers.isEmpty ? nil : TrackerCategory(title: category.title, trackers: filteredTrackers)
@@ -238,9 +216,9 @@ final class TrackersViewController: UIViewController {
     // MARK: - Показать/скрыть заглушку
     private func updatePlaceholderVisibility() {
         let isEmpty = visibleCategories.isEmpty
-        placeholderImageView.isHidden = !isEmpty  // Показываем звёздочку, если пусто
-        placeholderLabel.isHidden = !isEmpty      // Показываем текст, если пусто
-        collectionView.isHidden = isEmpty         // Скрываем коллекцию, если пусто
+        placeholderImageView.isHidden = !isEmpty
+        placeholderLabel.isHidden = !isEmpty
+        collectionView.isHidden = isEmpty
     }
     
     // MARK: - Действия
@@ -260,20 +238,17 @@ final class TrackersViewController: UIViewController {
     }
 }
 
-// MARK: - UICollectionViewDataSource (источник данных для коллекции)
+// MARK: - UICollectionViewDataSource
 extension TrackersViewController: UICollectionViewDataSource {
     
-    // Количество секций (категорий)
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return visibleCategories.count
     }
     
-    // Количество ячеек в секции
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return visibleCategories[section].trackers.count
     }
     
-    // Настройка ячейки
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: TrackerCell.identifier,
@@ -298,17 +273,16 @@ extension TrackersViewController: UICollectionViewDataSource {
     }
 }
 
-// MARK: - UICollectionViewDelegateFlowLayout (размеры ячеек)
+// MARK: - UICollectionViewDelegateFlowLayout
 extension TrackersViewController: UICollectionViewDelegateFlowLayout {
     
-    // Размер ячейки (2 колонки)
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let width = (collectionView.bounds.width - 8) / 2 // 8 — отступ между ячейками
+        let width = (collectionView.bounds.width - 8) / 2
         return CGSize(width: width, height: 148)
     }
 }
 
-// MARK: - TrackerCellDelegate (нажатие на кнопку "+" в ячейке)
+// MARK: - TrackerCellDelegate
 extension TrackersViewController: TrackerCellDelegate {
     
     func trackerCellDidTapComplete(_ cell: TrackerCell, trackerId: UUID) {
@@ -318,32 +292,56 @@ extension TrackersViewController: TrackerCellDelegate {
             return
         }
         
-        // Если трекер уже выполнен — убираем отметку, иначе — добавляем
-        if let index = completedTrackers.firstIndex(where: {
-            $0.trackerId == trackerId && Calendar.current.isDate($0.date, inSameDayAs: currentDate)
-        }) {
-            completedTrackers.remove(at: index)
-        } else {
-            completedTrackers.append(TrackerRecord(trackerId: trackerId, date: currentDate))
-        }
+        let record = TrackerRecord(trackerId: trackerId, date: currentDate)
         
-        collectionView.reloadData()
+        do {
+            // Проверяем, есть ли уже запись на эту дату
+            if try recordStore.isCompleted(trackerId: trackerId, on: currentDate) {
+                try recordStore.deleteRecord(record) // Снимаем отметку
+            } else {
+                try recordStore.addRecord(record)    // Ставим отметку
+            }
+            // Обновляем данные из базы
+            completedTrackers = try recordStore.fetchRecords()
+            collectionView.reloadData()
+        } catch {
+            print("[TrackersViewController] Ошибка изменения отметки: \(error)")
+        }
     }
 }
 
-// MARK: - CreateTrackerViewControllerDelegate (создание нового трекера)
+// MARK: - CreateTrackerViewControllerDelegate
 extension TrackersViewController: CreateTrackerViewControllerDelegate {
     
     func didCreateTracker(_ tracker: Tracker, categoryTitle: String) {
-        // Ищем категорию по названию
-        if let index = categories.firstIndex(where: { $0.title == categoryTitle }) {
-            var trackers = categories[index].trackers
-            trackers.append(tracker)
-            categories[index] = TrackerCategory(title: categoryTitle, trackers: trackers)
-        } else {
-            // Если категории нет — создаём новую
-            categories.append(TrackerCategory(title: categoryTitle, trackers: [tracker]))
+        do {
+            // Сохраняем трекер в Core Data
+            try trackerStore.addTracker(tracker, toCategoryWithTitle: categoryTitle)
+            // Перезагружаем данные
+            loadData()
+        } catch {
+            print("[TrackersViewController] Ошибка добавления трекера: \(error)")
         }
-        updateVisibleCategories()
+    }
+}
+
+// MARK: - TrackerStoreDelegate (автоматическое обновление таблицы)
+extension TrackersViewController: TrackerStoreDelegate {
+    func didUpdate(_ update: TrackerStoreUpdate) {
+
+        loadData()
+    }
+}
+// MARK: - TrackerCategoryStoreDelegate
+extension TrackersViewController: TrackerCategoryStoreDelegate {
+    func didUpdate(_ update: TrackerCategoryStoreUpdate) {
+        loadData()
+    }
+}
+
+// MARK: - TrackerRecordStoreDelegate
+extension TrackersViewController: TrackerRecordStoreDelegate {
+    func didUpdate(_ update: TrackerRecordStoreUpdate) {
+        loadData()
     }
 }

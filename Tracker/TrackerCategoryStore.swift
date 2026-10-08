@@ -1,7 +1,7 @@
 import CoreData
 import UIKit
 
-// MARK: - Делегат Store (без Core Data)
+// MARK: - Делегат Store
 protocol TrackerCategoryStoreDelegate: AnyObject {
     func didUpdate(_ update: TrackerCategoryStoreUpdate)
 }
@@ -37,11 +37,13 @@ final class TrackerCategoryStore: NSObject {
             cacheName: nil
         )
         controller.delegate = self
+        
         do {
             try controller.performFetch()
         } catch {
-            print("[\(Self.self)] Ошибка performFetch: \(error)")
+            print("[TrackerCategoryStore] Ошибка performFetch: \(error)")
         }
+        
         return controller
     }()
     
@@ -60,6 +62,8 @@ final class TrackerCategoryStore: NSObject {
     
     /// Получить все категории с трекерами
     func fetchCategories() throws -> [TrackerCategory] {
+        try fetchedResultsController.performFetch()
+        
         guard let objects = fetchedResultsController.fetchedObjects else { return [] }
         
         return objects.compactMap { categoryCoreData -> TrackerCategory? in
@@ -96,6 +100,8 @@ final class TrackerCategoryStore: NSObject {
         let category = TrackerCategoryCoreData(context: context)
         category.title = title
         try context.save()
+        
+        try fetchedResultsController.performFetch()
     }
 }
 

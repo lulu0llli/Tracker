@@ -11,6 +11,7 @@ final class CreateTrackerViewController: UIViewController {
     private var selectedWeekdays: [Weekday] = []
     private var selectedEmoji: String?
     private var selectedColor: UIColor?
+    private var selectedCategoryTitle: String?
     private let maxTitleLength = 38
     
     // Эмодзи и цвета из макета
@@ -204,7 +205,7 @@ final class CreateTrackerViewController: UIViewController {
         title = "Новая привычка"
         let appearance = UINavigationBarAppearance()
             appearance.configureWithOpaqueBackground()
-            appearance.backgroundColor = .white // или UIColor(named: "YPWhite")
+            appearance.backgroundColor = .white
             appearance.titleTextAttributes = [
                 .font: UIFont(name: "SFProText-Medium", size: 16) ?? .systemFont(ofSize: 16, weight: .medium),
                 .foregroundColor: UIColor(named: "YPBlack") ?? .black
@@ -365,7 +366,14 @@ final class CreateTrackerViewController: UIViewController {
     }
     
     @objc private func didTapCategory() {
-        print("Категория — будет реализовано позже")
+        let categoriesVC = TrackerCategoriesViewController()
+        categoriesVC.onCategorySelected = { [weak self] title in
+            self?.selectedCategoryTitle = title
+            self?.updateCategoryButton(title: title)
+        }
+        
+        let navController = UINavigationController(rootViewController: categoriesVC)
+        present(navController, animated: true)
     }
     
     @objc private func didTapCancel() {
@@ -414,6 +422,31 @@ final class CreateTrackerViewController: UIViewController {
         scheduleButton.setAttributedTitle(result, for: .normal)
         scheduleButton.titleLabel?.numberOfLines = 2
         scheduleButton.titleLabel?.lineBreakMode = .byWordWrapping
+    }
+    private func updateCategoryButton(title: String) {
+        let titleFont = UIFont(name: "SFProText-Regular", size: 17) ?? .systemFont(ofSize: 17)
+        
+        // Первая строка — "Категория" чёрным
+        let result = NSMutableAttributedString(
+            string: "Категория",
+            attributes: [
+                .font: titleFont,
+                .foregroundColor: UIColor(named: "YPBlack") ?? .black
+            ]
+        )
+        
+        // Вторая строка — выбранная категория серым
+        result.append(NSAttributedString(
+            string: "\n\(title)",
+            attributes: [
+                .font: titleFont,
+                .foregroundColor: UIColor(named: "YPGrey") ?? .systemGray
+            ]
+        ))
+        
+        categoryButton.setAttributedTitle(result, for: .normal)
+        categoryButton.titleLabel?.numberOfLines = 2
+        categoryButton.titleLabel?.lineBreakMode = .byWordWrapping
     }
 }
 

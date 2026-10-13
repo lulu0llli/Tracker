@@ -42,7 +42,7 @@ final class TrackersViewController: UIViewController {
     // Заголовок "Трекеры" (большой, слева)
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
-        label.text = "Трекеры"
+        label.text = NSLocalizedString("trackers_title", comment: "Заголовок главного экрана")
         label.font = UIFont(name: "SFProText-Bold", size: 34) ?? .systemFont(ofSize: 34, weight: .bold)
         label.textColor = UIColor(named: "YPBlack") ?? .black
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -52,7 +52,7 @@ final class TrackersViewController: UIViewController {
     // Поле поиска (UISearchTextField)
     private lazy var searchTextField: UISearchTextField = {
         let searchField = UISearchTextField()
-        searchField.placeholder = "Поиск"
+        searchField.placeholder = NSLocalizedString("search_placeholder", comment: "Плейсхолдер поиска")
         searchField.backgroundColor = UIColor(named: "YPBackgroundSearch")
         searchField.layer.cornerRadius = 10
         searchField.font = UIFont(name: "SFProText-Regular", size: 17) ?? .systemFont(ofSize: 17)
@@ -95,7 +95,7 @@ final class TrackersViewController: UIViewController {
     // Текст заглушки "Что будем отслеживать?"
     private lazy var placeholderLabel: UILabel = {
         let label = UILabel()
-        label.text = "Что будем отслеживать?"
+        label.text = NSLocalizedString("empty_state_title", comment: "Заглушка пустого списка")
         label.font = UIFont(name: "SFProText-Medium", size: 12) ?? .systemFont(ofSize: 12, weight: .medium)
         label.textColor = UIColor(named: "YPBlack") ?? .black
         label.textAlignment = .center
@@ -288,7 +288,7 @@ extension TrackersViewController: TrackerCellDelegate {
     func trackerCellDidTapComplete(_ cell: TrackerCell, trackerId: UUID) {
         // Нельзя отмечать будущие даты
         if currentDate > Date() {
-            print("Нельзя отметить будущую дату")
+            print(NSLocalizedString("future_date_error", comment: ""))
             return
         }
         

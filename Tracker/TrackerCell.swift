@@ -115,9 +115,14 @@ final class TrackerCell: UICollectionViewCell {
         emojiLabel.text = tracker.emoji
         titleLabel.text = tracker.title
         cardView.backgroundColor = tracker.color
-        daysLabel.text = "\(daysCount) \(daysCount.daysWord)"
         
-        // Иконка + / галочка меньшего размера (по Figma 10×10)
+        let daysText = String.localizedStringWithFormat(
+            NSLocalizedString("days_count", comment: "Количество дней"),
+            daysCount
+        )
+        daysLabel.text = daysText
+        
+        // Иконка + / галочка
         let config = UIImage.SymbolConfiguration(pointSize: 11, weight: .bold)
         let imageName = isCompleted ? "checkmark" : "plus"
         completeButton.setImage(UIImage(systemName: imageName, withConfiguration: config), for: .normal)

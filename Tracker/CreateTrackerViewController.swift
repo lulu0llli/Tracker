@@ -75,10 +75,16 @@ final class CreateTrackerViewController: UIViewController {
         field.layer.cornerRadius = 16
         field.font = UIFont(name: "SFProText-Regular", size: 17) ?? .systemFont(ofSize: 17)
         field.textColor = UIColor(named: "YPBlack") ?? .black
+        
+        let placeholderText = NSLocalizedString(
+            "tracker_name_placeholder",
+            comment: "Плейсхолдер названия трекера"
+        )
         field.attributedPlaceholder = NSAttributedString(
-            string: "Введите название трекера",
+            string: placeholderText,
             attributes: [.foregroundColor: UIColor(named: "YPGrey") ?? .systemGray]
         )
+        
         let leftPadding = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: 0))
         field.leftView = leftPadding
         field.leftViewMode = .always
@@ -92,7 +98,7 @@ final class CreateTrackerViewController: UIViewController {
     
     private lazy var limitLabel: UILabel = {
         let label = UILabel()
-        label.text = "Ограничение 38 символов"
+        label.text = NSLocalizedString("limit_label", comment: "Ограничение символов")
         label.font = UIFont(name: "SFProText-Regular", size: 17) ?? .systemFont(ofSize: 17)
         label.textColor = UIColor(named: "YPRed") ?? .systemRed
         label.textAlignment = .center
@@ -112,13 +118,13 @@ final class CreateTrackerViewController: UIViewController {
         return stack
     }()
     
-    private lazy var categoryButton: UIButton = makeOptionButton(title: "Категория")
-    private lazy var scheduleButton: UIButton = makeOptionButton(title: "Расписание")
+    private lazy var categoryButton: UIButton = makeOptionButton(title: NSLocalizedString("category_button", comment: "Кнопка Категория"))
+    private lazy var scheduleButton: UIButton = makeOptionButton(title: NSLocalizedString("schedule_button", comment: "Кнопка Расписание"))
     
     // Заголовок "Emoji"
     private let emojiTitleLabel: UILabel = {
         let label = UILabel()
-        label.text = "Emoji"
+        label.text = NSLocalizedString("emoji_section", comment: "Заголовок секции Emoji")
         label.font = UIFont.systemFont(ofSize: 19, weight: .bold)
         label.textColor = UIColor(named: "YPBlack") ?? .black
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -143,7 +149,7 @@ final class CreateTrackerViewController: UIViewController {
     // Заголовок "Цвет"
     private let colorTitleLabel: UILabel = {
         let label = UILabel()
-        label.text = "Цвет"
+        label.text = NSLocalizedString("color_section", comment: "Заголовок секции Цвет")
         label.font = UIFont.systemFont(ofSize: 19, weight: .bold)
         label.textColor = UIColor(named: "YPBlack") ?? .black
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -167,7 +173,7 @@ final class CreateTrackerViewController: UIViewController {
     
     private lazy var cancelButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Отменить", for: .normal)
+        button.setTitle(NSLocalizedString("cancel_button", comment: "Кнопка Отменить"), for: .normal)
         button.setTitleColor(UIColor(named: "YPRed") ?? .systemRed, for: .normal)
         button.titleLabel?.font = UIFont(name: "SFProText-Medium", size: 16) ?? .systemFont(ofSize: 16, weight: .medium)
         button.layer.borderWidth = 1
@@ -180,7 +186,7 @@ final class CreateTrackerViewController: UIViewController {
     
     private lazy var createButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Создать", for: .normal)
+        button.setTitle(NSLocalizedString("create_button", comment: "Кнопка Создать"), for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.titleLabel?.font = UIFont(name: "SFProText-Medium", size: 16) ?? .systemFont(ofSize: 16, weight: .medium)
         button.backgroundColor = UIColor(named: "YPGrey") ?? .systemGray
@@ -202,7 +208,7 @@ final class CreateTrackerViewController: UIViewController {
     }
     
     private func setupNavigationBar() {
-        title = "Новая привычка"
+        title = NSLocalizedString("new_habit_title", comment: "Заголовок экрана создания трекера")
         let appearance = UINavigationBarAppearance()
             appearance.configureWithOpaqueBackground()
             appearance.backgroundColor = .white
@@ -397,8 +403,7 @@ final class CreateTrackerViewController: UIViewController {
     
     private func updateScheduleButton(days: [Weekday]) {
         let titleFont = UIFont(name: "SFProText-Regular", size: 17) ?? .systemFont(ofSize: 17)
-        let result = NSMutableAttributedString(
-            string: "Расписание",
+        let result = NSMutableAttributedString(string: NSLocalizedString("schedule_button", comment: "Кнопка Расписание"),
             attributes: [
                 .font: titleFont,
                 .foregroundColor: UIColor(named: "YPBlack") ?? .black
@@ -407,7 +412,7 @@ final class CreateTrackerViewController: UIViewController {
         if !days.isEmpty {
             let daysText: String
             if days.count == Weekday.allCases.count {
-                daysText = "Каждый день"
+                daysText = NSLocalizedString("every_day", comment: "Каждый день")
             } else {
                 daysText = days.map { $0.shortName }.joined(separator: ", ")
             }

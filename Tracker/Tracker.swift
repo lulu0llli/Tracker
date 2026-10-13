@@ -11,16 +11,20 @@ struct Tracker {
 
 // MARK: - Weekday
 enum Weekday: String, CaseIterable {
-    case monday = "Понедельник"
-    case tuesday = "Вторник"
-    case wednesday = "Среда"
-    case thursday = "Четверг"
-    case friday = "Пятница"
-    case saturday = "Суббота"
-    case sunday = "Воскресенье"
+    case monday
+    case tuesday
+    case wednesday
+    case thursday
+    case friday
+    case saturday
+    case sunday
     
     static var allDays: [Weekday] {
-        return [.monday, .tuesday, .wednesday, .thursday, .friday, .saturday, .sunday]
+        [.monday, .tuesday, .wednesday, .thursday, .friday, .saturday, .sunday]
+    }
+    
+    var localizedName: String {
+        NSLocalizedString(rawValue, comment: "День недели")
     }
     
     var shortName: String {

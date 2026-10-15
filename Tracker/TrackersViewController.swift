@@ -245,6 +245,58 @@ final class TrackersViewController: UIViewController {
         searchText = textField.text ?? ""
         updateVisibleCategories()
     }
+    // MARK: - Контекстное меню: действия
+
+    private func editTracker(_ tracker: Tracker) {
+        // TODO: реализовать флоу редактирования (отдельная задача)
+        print("[TrackersViewController] Редактировать трекер: \(tracker.title)")
+    }
+
+    private func confirmDeleteTracker(_ tracker: Tracker) {
+        let alert = UIAlertController(
+            title: NSLocalizedString("delete_alert_title", comment: "Заголовок подтверждения удаления"),
+            message: nil,
+            preferredStyle: .actionSheet
+        )
+        
+        let deleteAction = UIAlertAction(
+            title: NSLocalizedString("delete_alert_delete", comment: "Кнопка Удалить в алерте"),
+            style: .destructive
+        ) { [weak self] _ in
+            self?.deleteTracker(tracker)
+        }
+        
+        let cancelAction = UIAlertAction(
+            title: NSLocalizedString("delete_alert_cancel", comment: "Кнопка Отменить в алерте"),
+            style: .cancel
+        )
+        
+        alert.addAction(deleteAction)
+        alert.addAction(cancelAction)
+        
+        // Для iPad — поповер
+        if let popover = alert.popoverPresentationController {
+            popover.sourceView = view
+            popover.sourceRect = CGRect(
+                x: view.bounds.midX,
+                y: view.bounds.midY,
+                width: 0,
+                height: 0
+            )
+            popover.permittedArrowDirections = []
+        }
+        
+        present(alert, animated: true)
+    }
+
+    private func deleteTracker(_ tracker: Tracker) {
+        do {
+            try trackerStore.deleteTracker(tracker)
+            // UI обновится автоматически через TrackerStoreDelegate → loadData()
+        } catch {
+            print("[TrackersViewController] Ошибка удаления трекера: \(error)")
+        }
+    }
 }
 
 // MARK: - UICollectionViewDataSource
@@ -345,5 +397,35 @@ extension TrackersViewController: TrackerCategoryStoreDelegate {
 extension TrackersViewController: TrackerRecordStoreDelegate {
     func didUpdate(_ update: TrackerRecordStoreUpdate) {
         loadData()
+    }
+}
+// MARK: - UICollectionViewDelegate (контекстное меню)
+extension TrackersViewController: UICollectionViewDelegate {
+    
+    func collectionView(
+        _ collectionView: UICollectionView,
+        contextMenuConfigurationForItemAt indexPath: IndexPath,
+        point: CGPoint
+    ) -> UIContextMenuConfiguration? {
+        let tracker = visibleCategories[indexPath.section].trackers[indexPath.row]
+        
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { [weak self] _ in
+            guard let self = self else { return nil }
+            
+            let editAction = UIAction(
+                title: NSLocalizedString("context_menu_edit", comment: "Пункт меню Редактировать")
+            ) { _ in
+                self.editTracker(tracker)
+            }
+            
+            let deleteAction = UIAction(
+                title: NSLocalizedString("context_menu_delete", comment: "Пункт меню Удалить"),
+                attributes: .destructive
+            ) { _ in
+                self.confirmDeleteTracker(tracker)
+            }
+            
+            return UIMenu(children: [editAction, deleteAction])
+        }
     }
 }

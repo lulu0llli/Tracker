@@ -42,7 +42,7 @@ final class CreateCategoryViewController: UIViewController {
         let button = UIButton(type: .system)
         button.setTitle(NSLocalizedString("done_button", comment: "Кнопка Готово"), for: .normal)
         button.titleLabel?.font = UIFont(name: "SFProText-Medium", size: 16) ?? .systemFont(ofSize: 16, weight: .medium)
-        button.setTitleColor(.white, for: .normal)
+        button.setTitleColor(UIColor(named: "YPWhite"), for: .normal)
         button.backgroundColor = UIColor(named: "YPGrey") ?? .systemGray
         button.layer.cornerRadius = 16
         button.isEnabled = false

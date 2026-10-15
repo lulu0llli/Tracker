@@ -1,54 +1,66 @@
-// Главный экран
-"trackers_title" = "Трекеры";
-"search_placeholder" = "Поиск";
-"empty_state_title" = "Что будем отслеживать?";
+// Main screen
+"trackers_title" = "Trackers";
+"search_placeholder" = "Search";
+"empty_state_title" = "What shall we track?";
 
-// Экран создания трекера
-"new_habit_title" = "Новая привычка";
-"tracker_name_placeholder" = "Введите название трекера";
-"limit_label" = "Ограничение 38 символов";
-"category_button" = "Категория";
-"schedule_button" = "Расписание";
+// Create tracker screen
+"new_habit_title" = "New Habit";
+"tracker_name_placeholder" = "Enter tracker name";
+"limit_label" = "Limit 38 characters";
+"category_button" = "Category";
+"schedule_button" = "Schedule";
 "emoji_section" = "Emoji";
-"color_section" = "Цвет";
-"cancel_button" = "Отменить";
-"create_button" = "Создать";
-"every_day" = "Каждый день";
+"color_section" = "Color";
+"cancel_button" = "Cancel";
+"create_button" = "Create";
+"every_day" = "Every day";
 
-// Экран расписания
-"schedule_title" = "Расписание";
-"done_button" = "Готово";
-"monday" = "Понедельник";
-"tuesday" = "Вторник";
-"wednesday" = "Среда";
-"thursday" = "Четверг";
-"friday" = "Пятница";
-"saturday" = "Суббота";
-"sunday" = "Воскресенье";
+// Schedule screen
+"schedule_title" = "Schedule";
+"done_button" = "Done";
+"monday" = "Monday";
+"tuesday" = "Tuesday";
+"wednesday" = "Wednesday";
+"thursday" = "Thursday";
+"friday" = "Friday";
+"saturday" = "Saturday";
+"sunday" = "Sunday";
 
-// Экран категорий
-"categories_title" = "Категория";
-"empty_categories" = "Привычки и события можно\nобъединить по смыслу";
-"add_category_button" = "Добавить категорию";
-"new_category_title" = "Новая категория";
-"category_name_placeholder" = "Введите название категории";
+// Categories screen
+"categories_title" = "Categories";
+"empty_categories" = "Habits and events can be\ncombined by meaning";
+"add_category_button" = "Add Category";
+"new_category_title" = "New Category";
+"category_name_placeholder" = "Enter category name";
 
-// Онбординг
-"onboarding_title_1" = "Отслеживайте только то, что хотите";
-"onboarding_title_2" = "Даже если это не литры воды и йога";
-"onboarding_button" = "Вот это технологии!";
+// Onboarding
+"onboarding_title_1" = "Track only what you want";
+"onboarding_title_2" = "Even if it's not litres of water and yoga";
+"onboarding_button" = "That's technology!";
 
-// Профиль
-"logout_alert_title" = "Выход из аккаунта";
-"logout_alert_message" = "Ты уверена, что хочешь выйти?";
-"logout_alert_cancel" = "Отмена";
-"logout_alert_confirm" = "Выйти";
-"profile_error_message" = "Не удалось загрузить профиль. Попробуйте позже.";
+// Profile
+"logout_alert_title" = "Log out";
+"logout_alert_message" = "Are you sure you want to log out?";
+"logout_alert_cancel" = "Cancel";
+"logout_alert_confirm" = "Log out";
+"profile_error_message" = "Failed to load profile. Please try again later.";
 
-// Общие
-"common_error_title" = "Ошибка";
-"common_error_ok" = "Ок";
-"future_date_error" = "Нельзя отметить будущую дату";
-"error_loading" = "Ошибка загрузки";
-"error_adding" = "Ошибка добавления";
-"error_deleting" = "Ошибка удаления";
+// Common
+"common_error_title" = "Error";
+"common_error_ok" = "OK";
+"future_date_error" = "Cannot mark a future date";
+"error_loading" = "Loading error";
+"error_adding" = "Adding error";
+"error_deleting" = "Deleting error";
+
+// Context menu
+"context_menu_edit" = "Edit";
+"context_menu_delete" = "Delete";
+"delete_alert_title" = "Are you sure you want to delete the tracker?";
+"delete_alert_delete" = "Delete";
+"delete_alert_cancel" = "Cancel";
+
+// Tab Bar
+"tab_trackers" = "Trackers";
+"tab_statistics" = "Statistics";
+

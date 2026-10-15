@@ -8,7 +8,7 @@ final class TabBarController: UITabBarController {
         let trackersVC = TrackersViewController()
         let trackersNavController = UINavigationController(rootViewController: trackersVC)
         trackersNavController.tabBarItem = UITabBarItem(
-            title: "Трекеры",
+            title: NSLocalizedString("tab_trackers", comment: "Вкладка Трекеры"),
             image: UIImage(named: "Trackers")?.withRenderingMode(.alwaysTemplate),
             selectedImage: UIImage(named: "Trackers")?.withRenderingMode(.alwaysTemplate)
         )
@@ -16,16 +16,16 @@ final class TabBarController: UITabBarController {
         // Вкладка "Статистика"
         let statisticsVC = StatisticsViewController()
         statisticsVC.tabBarItem = UITabBarItem(
-            title: "Статистика",
+            title: NSLocalizedString("tab_statistics", comment: "Вкладка Статистика"),
             image: UIImage(named: "Statistics")?.withRenderingMode(.alwaysTemplate),
             selectedImage: UIImage(named: "Statistics")?.withRenderingMode(.alwaysTemplate)
         )
         
         viewControllers = [trackersNavController, statisticsVC]
         
-        // Цвета TabBar 
-        tabBar.tintColor = UIColor(named: "YPBlue") ?? UIColor(red: 55/255, green: 114/255, blue: 231/255, alpha: 1) // #3772E7
-        tabBar.unselectedItemTintColor = UIColor(named: "YPGrey") ?? UIColor(red: 174/255, green: 175/255, blue: 180/255, alpha: 1) // #AEAFB4
+        // Цвета TabBar
+        tabBar.tintColor = UIColor(named: "YPBlue") ?? UIColor(red: 55/255, green: 114/255, blue: 231/255, alpha: 1)
+        tabBar.unselectedItemTintColor = UIColor(named: "YPGrey") ?? UIColor(red: 174/255, green: 175/255, blue: 180/255, alpha: 1)
         tabBar.backgroundColor = UIColor(named: "YPWhite")
         tabBar.isTranslucent = false
     }

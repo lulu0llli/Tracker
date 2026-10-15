@@ -200,7 +200,7 @@ final class CreateTrackerViewController: UIViewController {
     // MARK: - Жизненный цикл
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = UIColor(named: "YPWhite")
         setupNavigationBar()
         setupViews()
         setupConstraints()
@@ -211,7 +211,7 @@ final class CreateTrackerViewController: UIViewController {
         title = NSLocalizedString("new_habit_title", comment: "Заголовок экрана создания трекера")
         let appearance = UINavigationBarAppearance()
             appearance.configureWithOpaqueBackground()
-            appearance.backgroundColor = .white
+            appearance.backgroundColor = UIColor(named: "YPWhite")
             appearance.titleTextAttributes = [
                 .font: UIFont(name: "SFProText-Medium", size: 16) ?? .systemFont(ofSize: 16, weight: .medium),
                 .foregroundColor: UIColor(named: "YPBlack") ?? .black

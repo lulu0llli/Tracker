@@ -30,7 +30,6 @@ final class TrackersViewController: UIViewController {
         let picker = UIDatePicker()
         picker.datePickerMode = .date
         picker.preferredDatePickerStyle = .compact
-        picker.overrideUserInterfaceStyle = .light
         picker.tintColor = UIColor(named: "YPBlack") ?? .black
         picker.locale = Locale(identifier: "ru_RU")
         picker.calendar.locale = Locale(identifier: "ru_RU")
@@ -100,7 +99,7 @@ final class TrackersViewController: UIViewController {
     // MARK: - Жизненный цикл
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = UIColor(named: "YPWhite")
         
         setupNavBar()
         setupViews()

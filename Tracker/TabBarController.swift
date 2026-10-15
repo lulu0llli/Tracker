@@ -26,7 +26,7 @@ final class TabBarController: UITabBarController {
         // Цвета TabBar 
         tabBar.tintColor = UIColor(named: "YPBlue") ?? UIColor(red: 55/255, green: 114/255, blue: 231/255, alpha: 1) // #3772E7
         tabBar.unselectedItemTintColor = UIColor(named: "YPGrey") ?? UIColor(red: 174/255, green: 175/255, blue: 180/255, alpha: 1) // #AEAFB4
-        tabBar.backgroundColor = .white
+        tabBar.backgroundColor = UIColor(named: "YPWhite")
         tabBar.isTranslucent = false
     }
 }

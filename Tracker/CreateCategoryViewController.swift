@@ -54,7 +54,7 @@ final class CreateCategoryViewController: UIViewController {
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = UIColor(named: "YPWhite")
         
         title = NSLocalizedString("new_category_title", comment: "Заголовок создания категории")
         navigationController?.navigationBar.titleTextAttributes = [

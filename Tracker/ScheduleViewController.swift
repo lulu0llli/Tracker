@@ -30,7 +30,7 @@ final class ScheduleViewController: UIViewController {
         let button = UIButton(type: .system)
         button.setTitle(NSLocalizedString("done_button", comment: "Кнопка Готово"), for: .normal)
         button.backgroundColor = UIColor(named: "YPBlack") ?? .black
-        button.setTitleColor(.white, for: .normal)
+        button.setTitleColor(UIColor(named: "YPWhite"), for: .normal)
         button.titleLabel?.font = UIFont(name: "SFProText-Medium", size: 16) ?? .systemFont(ofSize: 16, weight: .medium)
         button.layer.cornerRadius = 16
         button.addTarget(self, action: #selector(didTapDone), for: .touchUpInside)
@@ -41,7 +41,7 @@ final class ScheduleViewController: UIViewController {
     // MARK: - Жизненный цикл
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = UIColor(named: "YPWhite")
         
         title = NSLocalizedString("schedule_title", comment: "Заголовок экрана расписания")
         navigationController?.navigationBar.titleTextAttributes = [

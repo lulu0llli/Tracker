@@ -63,3 +63,12 @@
 // Tab Bar
 "tab_trackers" = "Трекеры";
 "tab_statistics" = "Статистика";
+
+//Фильтры
+"filters_button" = "Фильтры";
+"filters_title" = "Фильтры";
+"filter_all" = "Все трекеры";
+"filter_today" = "Трекеры на сегодня";
+"filter_completed" = "Завершённые";
+"filter_uncompleted" = "Незавершённые";
+"nothing_found_title" = "Ничего не найдено";

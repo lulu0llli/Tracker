@@ -64,3 +64,11 @@
 "tab_trackers" = "Trackers";
 "tab_statistics" = "Statistics";
 
+// Filters
+"filters_button" = "Filters";
+"filters_title" = "Filters";
+"filter_all" = "All trackers";
+"filter_today" = "Trackers for today";
+"filter_completed" = "Completed";
+"filter_uncompleted" = "Uncompleted";
+"nothing_found_title" = "Nothing found";

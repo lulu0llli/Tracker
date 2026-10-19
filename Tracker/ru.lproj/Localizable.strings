@@ -1,6 +1,7 @@
 // Главный экран
 "trackers_title" = "Трекеры";
 "search_placeholder" = "Поиск";
+"nothing_found_title" = "Ничего не найдено";
 "empty_state_title" = "Что будем отслеживать?";
 
 // Экран создания трекера
@@ -72,3 +73,8 @@
 "filter_completed" = "Завершённые";
 "filter_uncompleted" = "Незавершённые";
 "nothing_found_title" = "Ничего не найдено";
+
+//Статистика
+"statistics_title" = "Статистика";
+"statistics_completed" = "Трекеров завершено";
+"statistics_empty" = "Анализировать пока нечего";

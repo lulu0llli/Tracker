@@ -1,6 +1,7 @@
 // Main screen
 "trackers_title" = "Trackers";
 "search_placeholder" = "Search";
+"nothing_found_title" = "Nothing found";
 "empty_state_title" = "What shall we track?";
 
 // Create tracker screen
@@ -72,3 +73,8 @@
 "filter_completed" = "Completed";
 "filter_uncompleted" = "Uncompleted";
 "nothing_found_title" = "Nothing found";
+
+//Statistics
+"statistics_title" = "Statistics";
+"statistics_completed" = "Trackers completed";
+"statistics_empty" = "Nothing to analyze yet";

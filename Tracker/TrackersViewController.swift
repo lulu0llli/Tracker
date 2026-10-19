@@ -296,10 +296,14 @@ final class TrackersViewController: UIViewController {
         collectionView.isHidden = isEmpty
         
         if isEmpty {
-            // Если есть поиск или активный фильтр — «Ничего не найдено»
-            if !searchText.isEmpty || currentFilter == .completed || currentFilter == .uncompleted {
+            let isSearching = !searchText.isEmpty
+            let isFiltering = currentFilter == .completed || currentFilter == .uncompleted
+            
+            if isSearching || isFiltering {
+                placeholderImageView.image = UIImage(named: "ErrorTrackers")
                 placeholderLabel.text = NSLocalizedString("nothing_found_title", comment: "Ничего не найдено")
             } else {
+                placeholderImageView.image = UIImage(named: "Plug")
                 placeholderLabel.text = NSLocalizedString("empty_state_title", comment: "Заглушка пустого списка")
             }
         }

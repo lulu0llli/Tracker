@@ -332,6 +332,7 @@ final class TrackersViewController: UIViewController {
     // MARK: - Действия
     
     @objc private func didTapAddButton() {
+        AnalyticsService.shared.reportClick(screen: "Main", item: "add_track")
         let createVC = CreateTrackerViewController()
         createVC.delegate = self
         let navController = UINavigationController(rootViewController: createVC)
@@ -349,6 +350,7 @@ final class TrackersViewController: UIViewController {
     }
     
     @objc private func didTapFiltersButton() {
+        AnalyticsService.shared.reportClick(screen: "Main", item: "filter")
         let filtersVC = FiltersViewController(selectedFilter: currentFilter)
         filtersVC.onFilterSelected = { [weak self] filter in
             self?.applyFilter(filter)
@@ -417,6 +419,16 @@ final class TrackersViewController: UIViewController {
             print("[TrackersViewController] Ошибка удаления трекера: \(error)")
         }
     }
+    // MARK: - Аналитика (жизненный цикл)
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        AnalyticsService.shared.reportOpen(screen: "Main")
+    }
+
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        AnalyticsService.shared.reportClose(screen: "Main")
+    }
 }
 
 // MARK: - UICollectionViewDataSource
@@ -463,6 +475,8 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
 extension TrackersViewController: TrackerCellDelegate {
     
     func trackerCellDidTapComplete(_ cell: TrackerCell, trackerId: UUID) {
+        AnalyticsService.shared.reportClick(screen: "Main", item: "track")
+        
         if currentDate > Date() {
             print(NSLocalizedString("future_date_error", comment: ""))
             return
@@ -534,6 +548,7 @@ extension TrackersViewController: UICollectionViewDelegate {
             let editAction = UIAction(
                 title: NSLocalizedString("context_menu_edit", comment: "Пункт меню Редактировать")
             ) { _ in
+                AnalyticsService.shared.reportClick(screen: "Main", item: "edit")
                 self.editTracker(tracker)
             }
             
@@ -541,6 +556,7 @@ extension TrackersViewController: UICollectionViewDelegate {
                 title: NSLocalizedString("context_menu_delete", comment: "Пункт меню Удалить"),
                 attributes: .destructive
             ) { _ in
+                AnalyticsService.shared.reportClick(screen: "Main", item: "delete")
                 self.confirmDeleteTracker(tracker)
             }
             

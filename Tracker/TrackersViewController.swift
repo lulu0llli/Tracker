@@ -73,7 +73,7 @@ final class TrackersViewController: UIViewController {
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
-        layout.minimumInteritemSpacing = 8
+        layout.minimumInteritemSpacing = 9
         layout.minimumLineSpacing = 8
         
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
@@ -93,7 +93,9 @@ final class TrackersViewController: UIViewController {
         button.setTitleColor(.white, for: .normal)
         button.backgroundColor = UIColor(named: "YPBlue") ?? .systemBlue
         button.layer.cornerRadius = 16
-        button.contentEdgeInsets = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
+        button.translatesAutoresizingMaskIntoConstraints = false
+                button.widthAnchor.constraint(equalToConstant: 114).isActive = true
+                button.heightAnchor.constraint(equalToConstant: 50).isActive = true
         button.addTarget(self, action: #selector(didTapFiltersButton), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
@@ -137,6 +139,12 @@ final class TrackersViewController: UIViewController {
         setupViews()
         setupConstraints()
         setupKeyboardDismissGesture()
+        
+        collectionView.register(
+            TrackerCategoryHeaderView.self,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+            withReuseIdentifier: TrackerCategoryHeaderView.identifier
+        )
         
         trackerStore.delegate = self
         categoryStore.delegate = self
@@ -186,7 +194,6 @@ final class TrackersViewController: UIViewController {
             
             filtersButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             filtersButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
-            filtersButton.heightAnchor.constraint(equalToConstant: 50),
             
             placeholderImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             placeholderImageView.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -20),
@@ -373,7 +380,10 @@ final class TrackersViewController: UIViewController {
     // MARK: - Контекстное меню: действия
     
     private func editTracker(_ tracker: Tracker) {
-        print("[TrackersViewController] Редактировать трекер: \(tracker.title)")
+        let editVC = CreateTrackerViewController(trackerToEdit: tracker)
+        editVC.delegate = self
+        let navController = UINavigationController(rootViewController: editVC)
+        present(navController, animated: true)
     }
     
     private func confirmDeleteTracker(_ tracker: Tracker) {
@@ -460,14 +470,36 @@ extension TrackersViewController: UICollectionViewDataSource {
         
         return cell
     }
+    
+    func collectionView(_ collectionView: UICollectionView,
+                        viewForSupplementaryElementOfKind kind: String,
+                        at indexPath: IndexPath) -> UICollectionReusableView {
+        guard kind == UICollectionView.elementKindSectionHeader else {
+            return UICollectionReusableView()
+        }
+        let header = collectionView.dequeueReusableSupplementaryView(
+            ofKind: kind,
+            withReuseIdentifier: TrackerCategoryHeaderView.identifier,
+            for: indexPath
+        ) as! TrackerCategoryHeaderView
+        let category = visibleCategories[indexPath.section]
+        header.configure(title: category.title)
+        return header
+    }
 }
 
 // MARK: - UICollectionViewDelegateFlowLayout
 extension TrackersViewController: UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let width = (collectionView.bounds.width - 8) / 2
+        let width = (collectionView.bounds.width - 9) / 2
         return CGSize(width: width, height: 148)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView,
+                        layout collectionViewLayout: UICollectionViewLayout,
+                        referenceSizeForHeaderInSection section: Int) -> CGSize {
+        return CGSize(width: collectionView.bounds.width, height: 40)
     }
 }
 
@@ -507,6 +539,15 @@ extension TrackersViewController: CreateTrackerViewControllerDelegate {
             loadData()
         } catch {
             print("[TrackersViewController] Ошибка добавления трекера: \(error)")
+        }
+    }
+    
+    func didUpdateTracker(_ tracker: Tracker, categoryTitle: String) {
+        do {
+            try trackerStore.updateTracker(tracker, newCategoryTitle: categoryTitle)
+            loadData()
+        } catch {
+            print("[TrackersViewController] Ошибка обновления трекера: \(error)")
         }
     }
 }

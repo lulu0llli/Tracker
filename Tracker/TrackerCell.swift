@@ -62,14 +62,19 @@ final class TrackerCell: UICollectionViewCell {
     
     // MARK: - Init
     override init(frame: CGRect) {
-        super.init(frame: frame)
-        setupUI()
-    }
-    
-    @available(*, unavailable)
-    required init?(coder: NSCoder) {
-        nil
-    }
+            super.init(frame: frame)
+            setupUI()
+            updateBorderColor()
+            
+            registerForTraitChanges([UITraitUserInterfaceStyle.self]) { (self: TrackerCell, previousTraitCollection: UITraitCollection) in
+                self.updateBorderColor()
+            }
+        }
+        
+        @available(*, unavailable)
+        required init?(coder: NSCoder) {
+            nil
+        }
     
     // MARK: - Setup UI
     private func setupUI() {
@@ -109,6 +114,15 @@ final class TrackerCell: UICollectionViewCell {
         ])
     }
     
+    // MARK: - Border Setup
+    private func updateBorderColor() {
+        // #AEAFB44D - это YPGrey с прозрачностью 30% (альфа 0.3)
+        let borderColor = UIColor(named: "YPGrey")?.withAlphaComponent(0.3).cgColor
+        cardView.layer.borderWidth = 1
+        cardView.layer.borderColor = borderColor
+    }
+    
+    
     // MARK: - Configure
     func configure(with tracker: Tracker, isCompleted: Bool, daysCount: Int) {
         trackerId = tracker.id
@@ -116,10 +130,7 @@ final class TrackerCell: UICollectionViewCell {
         titleLabel.text = tracker.title
         cardView.backgroundColor = tracker.color
         
-        let daysText = String.localizedStringWithFormat(
-            NSLocalizedString("days_count", comment: "Количество дней"),
-            daysCount
-        )
+        let daysText = String(format: NSLocalizedString("days_count", comment: ""), daysCount)
         daysLabel.text = daysText
         
         // Иконка + / галочка

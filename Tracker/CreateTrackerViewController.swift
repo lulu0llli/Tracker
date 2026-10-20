@@ -2,12 +2,15 @@ import UIKit
 
 protocol CreateTrackerViewControllerDelegate: AnyObject {
     func didCreateTracker(_ tracker: Tracker, categoryTitle: String)
+    func didUpdateTracker(_ tracker: Tracker, categoryTitle: String)
 }
 
 final class CreateTrackerViewController: UIViewController {
     
     // MARK: - Данные
     weak var delegate: CreateTrackerViewControllerDelegate?
+    private let trackerToEdit: Tracker?
+    
     private var selectedWeekdays: [Weekday] = []
     private var selectedEmoji: String?
     private var selectedColor: UIColor?
@@ -197,6 +200,17 @@ final class CreateTrackerViewController: UIViewController {
         return button
     }()
     
+    // MARK: - Init
+    
+    init(trackerToEdit: Tracker? = nil) {
+        self.trackerToEdit = trackerToEdit
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     // MARK: - Жизненный цикл
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -205,21 +219,45 @@ final class CreateTrackerViewController: UIViewController {
         setupViews()
         setupConstraints()
         setupKeyboardDismissGesture()
+        
+        // Заполняем поля, если это редактирование
+        if let tracker = trackerToEdit {
+            titleTextField.text = tracker.title
+            selectedEmoji = tracker.emoji
+            selectedColor = tracker.color
+            selectedWeekdays = tracker.schedule ?? []
+            
+            updateScheduleButton(days: selectedWeekdays)
+            
+            // Обновляем коллекции, чтобы выделились нужные ячейки
+            emojiCollectionView.reloadData()
+            colorCollectionView.reloadData()
+            
+            // Проверяем валидность кнопки "Создать/Сохранить"
+            updateCreateButtonState()
+        }
     }
     
     private func setupNavigationBar() {
-        title = NSLocalizedString("new_habit_title", comment: "Заголовок экрана создания трекера")
+        // Меняем заголовок в зависимости от режима
+        if trackerToEdit != nil {
+            title = NSLocalizedString("edit_habit_title", comment: "Заголовок экрана редактирования")
+            createButton.setTitle(NSLocalizedString("save_button", comment: "Кнопка Сохранить"), for: .normal)
+        } else {
+            title = NSLocalizedString("new_habit_title", comment: "Заголовок экрана создания трекера")
+        }
+        
         let appearance = UINavigationBarAppearance()
-            appearance.configureWithOpaqueBackground()
-            appearance.backgroundColor = UIColor(named: "YPWhite")
-            appearance.titleTextAttributes = [
-                .font: UIFont(name: "SFProText-Medium", size: 16) ?? .systemFont(ofSize: 16, weight: .medium),
-                .foregroundColor: UIColor(named: "YPBlack") ?? .black
-            ]
-            
-            navigationController?.navigationBar.standardAppearance = appearance
-            navigationController?.navigationBar.scrollEdgeAppearance = appearance
-            navigationController?.navigationBar.compactAppearance = appearance
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = UIColor(named: "YPWhite")
+        appearance.titleTextAttributes = [
+            .font: UIFont(name: "SFProText-Medium", size: 16) ?? .systemFont(ofSize: 16, weight: .medium),
+            .foregroundColor: UIColor(named: "YPBlack") ?? .black
+        ]
+        
+        navigationController?.navigationBar.standardAppearance = appearance
+        navigationController?.navigationBar.scrollEdgeAppearance = appearance
+        navigationController?.navigationBar.compactAppearance = appearance
     }
     
     private func setupViews() {
@@ -250,14 +288,12 @@ final class CreateTrackerViewController: UIViewController {
         button.titleLabel?.font = UIFont(name: "SFProText-Regular", size: 17) ?? .systemFont(ofSize: 17)
         button.contentHorizontalAlignment = .leading
         
-        // Отступы через Configuration
         var config = UIButton.Configuration.plain()
         config.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 40)
         button.configuration = config
         
         button.heightAnchor.constraint(equalToConstant: 75).isActive = true
         
-        // Шеврон
         let chevron = UIImageView(image: UIImage(named: "Chevron"))
         chevron.tintColor = UIColor(named: "YPGrey") ?? .systemGray
         chevron.contentMode = .scaleAspectFit
@@ -308,7 +344,7 @@ final class CreateTrackerViewController: UIViewController {
             emojiCollectionView.topAnchor.constraint(equalTo: emojiTitleLabel.bottomAnchor, constant: 8),
             emojiCollectionView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             emojiCollectionView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            emojiCollectionView.heightAnchor.constraint(equalToConstant: 226), // 4 ряда * 52 + 3*6
+            emojiCollectionView.heightAnchor.constraint(equalToConstant: 226),
             
             colorTitleLabel.topAnchor.constraint(equalTo: emojiCollectionView.bottomAnchor, constant: 16),
             colorTitleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
@@ -390,14 +426,31 @@ final class CreateTrackerViewController: UIViewController {
         guard let title = titleTextField.text, !title.isEmpty,
               let emoji = selectedEmoji,
               let color = selectedColor else { return }
-        let tracker = Tracker(
-            id: UUID(),
-            title: title,
-            color: color,
-            emoji: emoji,
-            schedule: selectedWeekdays
-        )
-        delegate?.didCreateTracker(tracker, categoryTitle: "Важное")
+        
+        let finalCategory = selectedCategoryTitle ?? "Важное"
+        
+        if let trackerToEdit = trackerToEdit {
+            // Логика ОБНОВЛЕНИЯ существующего трекера
+            let updatedTracker = Tracker(
+                id: trackerToEdit.id, // Сохраняем старый ID!
+                title: title,
+                color: color,
+                emoji: emoji,
+                schedule: selectedWeekdays
+            )
+            delegate?.didUpdateTracker(updatedTracker, categoryTitle: finalCategory)
+        } else {
+            // Логика СОЗДАНИЯ нового трекера
+            let tracker = Tracker(
+                id: UUID(),
+                title: title,
+                color: color,
+                emoji: emoji,
+                schedule: selectedWeekdays
+            )
+            delegate?.didCreateTracker(tracker, categoryTitle: finalCategory)
+        }
+        
         dismiss(animated: true)
     }
     
@@ -428,10 +481,10 @@ final class CreateTrackerViewController: UIViewController {
         scheduleButton.titleLabel?.numberOfLines = 2
         scheduleButton.titleLabel?.lineBreakMode = .byWordWrapping
     }
+    
     private func updateCategoryButton(title: String) {
         let titleFont = UIFont(name: "SFProText-Regular", size: 17) ?? .systemFont(ofSize: 17)
         
-        // Первая строка — "Категория" чёрным
         let result = NSMutableAttributedString(
             string: "Категория",
             attributes: [
@@ -440,7 +493,6 @@ final class CreateTrackerViewController: UIViewController {
             ]
         )
         
-        // Вторая строка — выбранная категория серым
         result.append(NSAttributedString(
             string: "\n\(title)",
             attributes: [

@@ -6,11 +6,11 @@ final class OnboardingViewController: UIPageViewController {
     private lazy var pages: [UIViewController] = [
         OnboardingPageViewController(page: OnboardingPage(
             backgroundImageName: "onboarding1",
-            title: "Отслеживайте только то, что хотите"
+            title: NSLocalizedString("onboarding_title_1", comment: "Первый экран онбординга")
         )),
         OnboardingPageViewController(page: OnboardingPage(
             backgroundImageName: "onboarding2",
-            title: "Даже если это\nне литры воды и йога"
+            title: NSLocalizedString("onboarding_title_2", comment: "Второй экран онбординга")
         ))
     ]
     
@@ -28,9 +28,9 @@ final class OnboardingViewController: UIPageViewController {
     // Кнопка (top 668, размер 335×60, radius 16, фон #1A1B22)
     private lazy var doneButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Вот это технологии!", for: .normal)
+        button.setTitle(NSLocalizedString("onboarding_button", comment: "Кнопка онбординга"), for: .normal)
         button.titleLabel?.font = UIFont(name: "SFProText-Medium", size: 16) ?? .systemFont(ofSize: 16, weight: .medium)
-        button.setTitleColor(.white, for: .normal)
+        button.setTitleColor(UIColor(named: "YPWhite"), for: .normal)
         button.backgroundColor = UIColor(named: "YPBlack") ?? .black
         button.layer.cornerRadius = 16
         button.addTarget(self, action: #selector(didTapDone), for: .touchUpInside)

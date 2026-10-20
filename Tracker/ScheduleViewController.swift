@@ -28,9 +28,9 @@ final class ScheduleViewController: UIViewController {
     // Кнопка "Готово" внизу
     private lazy var doneButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Готово", for: .normal)
+        button.setTitle(NSLocalizedString("done_button", comment: "Кнопка Готово"), for: .normal)
         button.backgroundColor = UIColor(named: "YPBlack") ?? .black
-        button.setTitleColor(.white, for: .normal)
+        button.setTitleColor(UIColor(named: "YPWhite"), for: .normal)
         button.titleLabel?.font = UIFont(name: "SFProText-Medium", size: 16) ?? .systemFont(ofSize: 16, weight: .medium)
         button.layer.cornerRadius = 16
         button.addTarget(self, action: #selector(didTapDone), for: .touchUpInside)
@@ -41,9 +41,9 @@ final class ScheduleViewController: UIViewController {
     // MARK: - Жизненный цикл
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = UIColor(named: "YPWhite")
         
-        title = "Расписание"
+        title = NSLocalizedString("schedule_title", comment: "Заголовок экрана расписания")
         navigationController?.navigationBar.titleTextAttributes = [
             .font: UIFont(name: "SFProText-Medium", size: 16) ?? .systemFont(ofSize: 16, weight: .medium),
             .foregroundColor: UIColor(named: "YPBlack") ?? .black
@@ -104,7 +104,7 @@ extension ScheduleViewController: UITableViewDataSource, UITableViewDelegate {
         let weekday = Weekday.allCases[indexPath.row]
         
         // Название дня недели
-        cell.textLabel?.text = weekday.rawValue
+        cell.textLabel?.text = weekday.localizedName
         cell.textLabel?.font = UIFont(name: "SFProText-Regular", size: 17) ?? .systemFont(ofSize: 17)
         cell.textLabel?.textColor = UIColor(named: "YPBlack") ?? .black
         cell.backgroundColor = UIColor(named: "YPBackgroundGrey")

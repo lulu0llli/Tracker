@@ -36,7 +36,7 @@ final class TrackerCategoriesViewController: UIViewController {
     
     private lazy var placeholderLabel: UILabel = {
         let label = UILabel()
-        label.text = "Привычки и события можно\nобъединить по смыслу"
+        label.text = NSLocalizedString("empty_categories", comment: "Заглушка пустого списка категорий")
         label.font = UIFont(name: "SFProText-Medium", size: 12) ?? .systemFont(ofSize: 12, weight: .medium)
         label.textColor = UIColor(named: "YPBlack") ?? .black
         label.textAlignment = .center
@@ -47,9 +47,9 @@ final class TrackerCategoriesViewController: UIViewController {
     
     private lazy var addButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Добавить категорию", for: .normal)
+        button.setTitle(NSLocalizedString("add_category_button", comment: "Кнопка Добавить категорию"), for: .normal)
         button.titleLabel?.font = UIFont(name: "SFProText-Medium", size: 16) ?? .systemFont(ofSize: 16, weight: .medium)
-        button.setTitleColor(.white, for: .normal)
+        button.setTitleColor(UIColor(named: "YPWhite"), for: .normal)
         button.backgroundColor = UIColor(named: "YPBlack") ?? .black
         button.layer.cornerRadius = 16
         button.addTarget(self, action: #selector(didTapAdd), for: .touchUpInside)
@@ -60,7 +60,7 @@ final class TrackerCategoriesViewController: UIViewController {
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = UIColor(named: "YPWhite")
         
         setupNavigationBar()
         setupViews()
@@ -70,11 +70,11 @@ final class TrackerCategoriesViewController: UIViewController {
     }
     
     private func setupNavigationBar() {
-        title = "Категория"
+        title = NSLocalizedString("categories_title", comment: "Заголовок экрана категорий")
         
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = .white
+        appearance.backgroundColor = UIColor(named: "YPWhite")
         appearance.shadowColor = .clear
         appearance.titleTextAttributes = [
             .font: UIFont(name: "SFProText-Medium", size: 16) ?? .systemFont(ofSize: 16, weight: .medium),
@@ -130,8 +130,8 @@ final class TrackerCategoriesViewController: UIViewController {
         }
         
         viewModel.onError = { [weak self] message in
-            let alert = UIAlertController(title: "Ошибка", message: message, preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "Ок", style: .default))
+            let alert = UIAlertController(title: NSLocalizedString("common_error_title", comment: "Заголовок ошибки"), message: message, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: NSLocalizedString("common_error_ok", comment: "Кнопка Ок"), style: .default))
             self?.present(alert, animated: true)
         }
     }

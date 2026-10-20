@@ -15,8 +15,13 @@ final class CreateCategoryViewController: UIViewController {
         field.layer.cornerRadius = 16
         field.font = UIFont(name: "SFProText-Regular", size: 17) ?? .systemFont(ofSize: 17)
         field.textColor = UIColor(named: "YPBlack") ?? .black
+        
+        let placeholderText = NSLocalizedString(
+            "category_name_placeholder",
+            comment: "Плейсхолдер названия категории"
+        )
         field.attributedPlaceholder = NSAttributedString(
-            string: "Введите название категории",
+            string: placeholderText,
             attributes: [.foregroundColor: UIColor(named: "YPGrey") ?? .systemGray]
         )
         
@@ -35,9 +40,9 @@ final class CreateCategoryViewController: UIViewController {
     
     private lazy var doneButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Готово", for: .normal)
+        button.setTitle(NSLocalizedString("done_button", comment: "Кнопка Готово"), for: .normal)
         button.titleLabel?.font = UIFont(name: "SFProText-Medium", size: 16) ?? .systemFont(ofSize: 16, weight: .medium)
-        button.setTitleColor(.white, for: .normal)
+        button.setTitleColor(UIColor(named: "YPWhite"), for: .normal)
         button.backgroundColor = UIColor(named: "YPGrey") ?? .systemGray
         button.layer.cornerRadius = 16
         button.isEnabled = false
@@ -49,9 +54,9 @@ final class CreateCategoryViewController: UIViewController {
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = UIColor(named: "YPWhite")
         
-        title = "Новая категория"
+        title = NSLocalizedString("new_category_title", comment: "Заголовок создания категории")
         navigationController?.navigationBar.titleTextAttributes = [
             .font: UIFont(name: "SFProText-Medium", size: 16) ?? .systemFont(ofSize: 16, weight: .medium),
             .foregroundColor: UIColor(named: "YPBlack") ?? .black

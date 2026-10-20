@@ -1,0 +1,82 @@
+// Main screen
+"trackers_title" = "Trackers";
+"search_placeholder" = "Search";
+"nothing_found_title" = "Nothing found";
+"empty_state_title" = "What shall we track?";
+
+// Create tracker screen
+"new_habit_title" = "New Habit";
+"tracker_name_placeholder" = "Enter tracker name";
+"limit_label" = "Limit 38 characters";
+"category_button" = "Category";
+"schedule_button" = "Schedule";
+"emoji_section" = "Emoji";
+"color_section" = "Color";
+"cancel_button" = "Cancel";
+"create_button" = "Create";
+"every_day" = "Every day";
+"edit_habit_title" = "Edit habit";
+"save_button" = "Save";
+
+// Schedule screen
+"schedule_title" = "Schedule";
+"done_button" = "Done";
+"monday" = "Monday";
+"tuesday" = "Tuesday";
+"wednesday" = "Wednesday";
+"thursday" = "Thursday";
+"friday" = "Friday";
+"saturday" = "Saturday";
+"sunday" = "Sunday";
+
+// Categories screen
+"categories_title" = "Categories";
+"empty_categories" = "Habits and events can be\ncombined by meaning";
+"add_category_button" = "Add Category";
+"new_category_title" = "New Category";
+"category_name_placeholder" = "Enter category name";
+
+// Onboarding
+"onboarding_title_1" = "Track only what you want";
+"onboarding_title_2" = "Even if it's not litres of water and yoga";
+"onboarding_button" = "That's technology!";
+
+// Profile
+"logout_alert_title" = "Log out";
+"logout_alert_message" = "Are you sure you want to log out?";
+"logout_alert_cancel" = "Cancel";
+"logout_alert_confirm" = "Log out";
+"profile_error_message" = "Failed to load profile. Please try again later.";
+
+// Common
+"common_error_title" = "Error";
+"common_error_ok" = "OK";
+"future_date_error" = "Cannot mark a future date";
+"error_loading" = "Loading error";
+"error_adding" = "Adding error";
+"error_deleting" = "Deleting error";
+
+// Context menu
+"context_menu_edit" = "Edit";
+"context_menu_delete" = "Delete";
+"delete_alert_title" = "Are you sure you want to delete the tracker?";
+"delete_alert_delete" = "Delete";
+"delete_alert_cancel" = "Cancel";
+
+// Tab Bar
+"tab_trackers" = "Trackers";
+"tab_statistics" = "Statistics";
+
+// Filters
+"filters_button" = "Filters";
+"filters_title" = "Filters";
+"filter_all" = "All trackers";
+"filter_today" = "Trackers for today";
+"filter_completed" = "Completed";
+"filter_uncompleted" = "Uncompleted";
+"nothing_found_title" = "Nothing found";
+
+//Statistics
+"statistics_title" = "Statistics";
+"statistics_completed" = "Trackers completed";
+"statistics_empty" = "Nothing to analyze yet";

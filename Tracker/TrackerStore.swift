@@ -82,6 +82,29 @@ final class TrackerStore: NSObject {
         try context.save()
     }
     
+    /// Обновить существующий трекер
+    func updateTracker(_ tracker: Tracker, newCategoryTitle: String? = nil) throws {
+        let request: NSFetchRequest<TrackerCoreData> = TrackerCoreData.fetchRequest()
+        request.predicate = NSPredicate(format: "id == %@", tracker.id as CVarArg)
+        
+        guard let object = try context.fetch(request).first else { return }
+        
+        object.title = tracker.title
+        object.color = colorMarshalling.hexString(from: tracker.color)
+        object.emoji = tracker.emoji
+        object.schedule = tracker.schedule?.map { $0.rawValue }.joined(separator: ",")
+        
+        if let newCategoryTitle = newCategoryTitle {
+            let categoryRequest: NSFetchRequest<TrackerCategoryCoreData> = TrackerCategoryCoreData.fetchRequest()
+            categoryRequest.predicate = NSPredicate(format: "title == %@", newCategoryTitle)
+            if let category = try context.fetch(categoryRequest).first {
+                object.category = category
+            }
+        }
+        
+        try context.save()
+    }
+    
     /// Удалить трекер
     func deleteTracker(_ tracker: Tracker) throws {
         let request: NSFetchRequest<TrackerCoreData> = TrackerCoreData.fetchRequest()
